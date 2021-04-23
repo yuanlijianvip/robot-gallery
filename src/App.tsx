@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from './assets/images/logo.svg';
 import robots from './mockdata/robots.json';
 import Robot from "./components/Robot";
@@ -12,22 +12,21 @@ interface State {
   count: number;
 }
 
-class App extends React.Component<Props, State> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      robotGallery: [],
-      count: 0
-    }
-  }
+const App: React.FC = (props) => {
 
-  componentDidMount() {
-    fetch("https://jsonplaceholder.typicode.com/users")
-    .then(response => response.json())
-    .then(data => this.setState({robotGallery: data}))
-  }
+  const [count, setCount] = useState<number>(0);
+  const [robotGallery, setRobotGallery] = useState<any>([]);
 
-  render() {
+    useEffect(() => {
+      document.title = `点击${count}次`
+    }, [count])
+
+    useEffect(() => {
+      fetch("https://jsonplaceholder.typicode.com/users")
+      .then(response => response.json())
+      .then(data => setRobotGallery(data))
+    }, [])
+
     return (
       <div className={styles.app}>
         <div className={styles.appHeader}>
@@ -35,28 +34,28 @@ class App extends React.Component<Props, State> {
           <h1>罗伯特机器人炫酷吊炸天online购物平台的名字要长</h1>
         </div>
         <button onClick={()=> {
+          setCount(count+1);
           // this.setState({count: this.state.count + 1}, () => {
           //   console.log("count", this.state.count);
           // });
-          this.setState((preState, preProps) => {
-            return { count: preState.count + 1 }
-          }, () => {
-            console.log("count ", this.state.count);
-          })
-          this.setState((preState, preProps) => {
-            return { count: preState.count + 1 }
-          }, () => {
-            console.log("count ", this.state.count);
-          })
+          // this.setState((preState, preProps) => {
+          //   return { count: preState.count + 1 }
+          // }, () => {
+          //   console.log("count ", this.state.count);
+          // })
+          // this.setState((preState, preProps) => {
+          //   return { count: preState.count + 1 }
+          // }, () => {
+          //   console.log("count ", this.state.count);
+          // })
         }}>Click</button>
-        <span>count: {this.state.count}</span>
+        <span>count: {count}</span>
         <ShoppingCart />
         <div className={styles.robotList}>
-          {this.state.robotGallery.map( r => <Robot id={r.id} email={r.email} name={r.name}/>)}
+          {robotGallery.map( r => <Robot id={r.id} email={r.email} name={r.name}/>)}
         </div>
       </div>
     );
   }
-}
 
 export default App;
